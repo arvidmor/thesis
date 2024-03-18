@@ -1,2 +1,2 @@
-# thesis
-My thesis project: Dynamic Updates in Embedded Devices
+# Dynamic Updates in Embedded Devices
+Repository for my bachelors thesis project. 
