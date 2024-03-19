@@ -53,3 +53,7 @@ dkms.conf
 
 # Build directories
 **/build/
+
+# MSP430 toolchain
+**/tools/
+**/support/
