@@ -51,9 +51,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# Build files
+# Build and debug files
 **/build/
-
-# MSP430 toolchain
-**/tools/
-**/support/
+**/.*

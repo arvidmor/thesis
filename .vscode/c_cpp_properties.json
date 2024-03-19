@@ -3,12 +3,13 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${HOME}/tools/msp430-gcc/include/"
             ],
             "defines": [
                 "__MSP430FR5994__"
             ],
-            "compilerPath": "${workspaceFolder}/application/tools/bin/msp430-elf-gcc",
+            "compilerPath": "${HOME}/tools/msp430-gcc/bin/msp430-elf-gcc",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "${default}",
