@@ -53,4 +53,6 @@ dkms.conf
 
 # Build and debug files
 **/build/
-**/.*
+.*
+!/.gitignore
+!/.vscode/
