@@ -3,6 +3,7 @@
 BUILDDIR = build
 SRCDIR = src
 OBJDIR = $(BUILDDIR)/obj
+ASMDIR = $(BUILDDIR)/asm
 
 MSPGCC_ROOT_DIR = $(HOME)/tools/msp430-gcc
 MSPGCC_BIN_DIR = $(MSPGCC_ROOT_DIR)/bin
@@ -22,6 +23,7 @@ DEBUG = LD_LIBRARY_PATH=$(DEBUG_DRIVERS_DIR) $(DEBUG_BIN_DIR)/mspdebug
 # Files
 SRCS = $(SRCDIR)/main.c
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+ASMS = $(SRCS:$(SRCDIR)/%.c=$(ASMDIR)/%.s)
 TARGET = $(BUILDDIR)/app
 
 # Flags
@@ -40,8 +42,12 @@ endif
 #### TARGETS ####
 
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(ASMS)
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+$(ASMDIR)/%.s: $(SRCDIR)/%.c
+	@mkdir -p $(ASMDIR)
+	$(CC) $(CFLAGS) -S $< -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
