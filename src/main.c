@@ -5,15 +5,23 @@ int main(void)
     WDTCTL = WDTPW | WDTHOLD;               // Stop WDT
 
     // Configure GPIO
-    P1OUT &= ~BIT0;                         // Clear P1.0 output latch for a defined power-on state
-    P1DIR |= BIT0;                          // Set P1.0 to output direction
+    P1DIR |= BIT0;  // Set P1.0 to output direction
+    P1OUT |= BIT0;  // Set P1.0 to high
 
-    PM5CTL0 &= ~LOCKLPM5;                   // Disable the GPIO power-on default high-impedance mode
-                                            // to activate previously configured port settings
+    // Disable the GPIO power-on default high-impedance mode to activate
+    // previously configured port settings
+    PM5CTL0 &= ~LOCKLPM5;
 
-    while(1)
-    {
-        P1OUT ^= BIT0;                      // Toggle LED
-        __delay_cycles(500000);
-    }
+    TA0CCTL0 = CCIE;                        // TACCR0 interrupt enabled
+    TA0CCR0 = 30000;
+    TA0CTL = TASSEL__SMCLK | MC__UP;        // SMCLK, UP mode
+
+    __bis_SR_register(LPM0_bits + GIE);     // Enter LPM0 w/ interrupt
+    __no_operation();                       // For debugger
+}
+
+// Timer0_A0 interrupt service routine: toggles the P1.0 LED
+void __attribute__ ((interrupt(TIMER0_A0_VECTOR))) Timer0_A0_ISR (void)
+{
+    P1OUT ^= BIT0;
 }
