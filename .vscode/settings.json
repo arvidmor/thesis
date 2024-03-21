@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "msp430fr5994.h": "c"
-    }
+    },
+    "cSpell.enabled": true
 }
