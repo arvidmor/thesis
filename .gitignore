@@ -59,3 +59,5 @@ dkms.conf
 
 # PDFS and stuff i cite in the report
 **/reference-pdfs
+/Debug/
+/Debug_GNU/
