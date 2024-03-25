@@ -28,8 +28,8 @@ TARGET = $(BUILDDIR)/app
 
 # Flags
 MMCU = msp430fr5994
-CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU)
-LDFLAGS = -L$(LIB_DIRS) -mmcu=$(MMCU)
+CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU) -mlarge  -mhwmult=f5series
+LDFLAGS = $(CFLAGS) -L$(LIB_DIRS) -mlarge -Xlinker -Map=$(BUILDDIR)/app.map
 
 # Build mode
 BUILD_DEBUG = 1
@@ -42,16 +42,20 @@ endif
 #### TARGETS ####
 
 
-$(TARGET): $(OBJS) $(ASMS)
+$(TARGET): $(OBJS) $(ASMS) $(BUILDDIR)/main.diff
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 $(ASMDIR)/%.s: $(SRCDIR)/%.c
 	@mkdir -p $(ASMDIR)
+	@mv $@ $@.old 2>/dev/null || true
 	$(CC) $(CFLAGS) -S $< -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILDDIR)/main.diff: $(ASMS)
+	diff $(ASMS) $(ASMS).old > $(BUILDDIR)/main.diff || true
 
 #### PHONIES ####
 .PHONY: all clean flash
@@ -62,5 +66,5 @@ flash: $(TARGET)
 	$(DEBUG) tilib "prog $(TARGET)"
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS) $(TARGET) $(ASMS) $(BUILDDIR)/main.diff
 	rm -rf $(OBJDIR)
