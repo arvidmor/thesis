@@ -21,14 +21,15 @@ GDB = $(MSPGCC_BIN_DIR)/msp430-elf-gdb
 DEBUG = LD_LIBRARY_PATH=$(DEBUG_DRIVERS_DIR) $(DEBUG_BIN_DIR)/mspdebug
 
 # Files
-SRCS = $(SRCDIR)/main.c
+SRCS = 	$(SRCDIR)/main.c \
+		$(SRCDIR)/utils.c
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 ASMS = $(SRCS:$(SRCDIR)/%.c=$(ASMDIR)/%.s)
 TARGET = $(BUILDDIR)/app
 
 # Flags
 MMCU = msp430fr5994
-CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU) -mlarge  -mhwmult=f5series
+CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU) -mlarge
 LDFLAGS = $(CFLAGS) -L$(LIB_DIRS) -mlarge -Xlinker -Map=$(BUILDDIR)/app.map
 
 # Build mode
@@ -41,8 +42,7 @@ endif
 
 #### TARGETS ####
 
-
-$(TARGET): $(OBJS) $(ASMS) $(BUILDDIR)/main.diff
+$(TARGET): $(OBJS) $(ASMS) 
 	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
 
 $(ASMDIR)/%.s: $(SRCDIR)/%.c
@@ -54,17 +54,25 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILDDIR)/main.diff: $(ASMS)
-	diff $(ASMS) $(ASMS).old > $(BUILDDIR)/main.diff || true
+$(TARGET).diff: $(OBJS)
+	@mv $(TARGET) $(TARGET).old
+	@make all
+	./xdiff.sh $(TARGET).old $(TARGET) $@
 
 #### PHONIES ####
-.PHONY: all clean flash
+.PHONY: all clean flash diff debug
 
 all: $(TARGET)
+
+diff: $(TARGET).diff
+
+debug: $(TARGET)
+	$(GDB) $(TARGET) 
 
 flash: $(TARGET)
 	$(DEBUG) tilib "prog $(TARGET)"
 
 clean:
 	rm -f $(OBJS) $(TARGET) $(ASMS) $(BUILDDIR)/main.diff
+	rm -f $(TARGET).*
 	rm -rf $(OBJDIR)
