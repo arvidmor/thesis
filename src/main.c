@@ -2,6 +2,7 @@
 #include <msp430.h>
 #include "utils.h"
 
+#pragma PERSISTENT(diff)
 static char* diff = "0000210 4381 0000 4381 0002 90b1 2710 0000 200e";
 
 int main(void)
