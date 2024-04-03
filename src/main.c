@@ -2,8 +2,7 @@
 #include <msp430.h>
 #include "utils.h"
 
-#pragma PERSISTENT(diff)
-static char* diff = "0000210 4381 0000 4381 0002 90b1 2710 0000 200e";
+static char diff[256] ={0};
 
 int main(void)
 {
@@ -30,25 +29,33 @@ int main(void)
     _BIS_SR(GIE);
 
     long i = 0;
+
     while(1) {
-        if (i == 10000) {
+        if (i == 20000) {
             P1OUT ^= BIT0;                 // Toggle P1.0 using exclusive-OR
             i = 0;
         }
         i++;
     }
+
+    return 0;
 }
 
-void P5_interrupt_callback() {
-    int* addr = (int *)(__UINTPTR_TYPE__)axtoi(diff);
-    int* instr = ((int*)diff)+8;
+inline void P5_interrupt_callback() {
+    char* addr = (char*)axtoi(diff);
+    char* byte = diff+8;
 
-    while (instr) {
-        // TODO: wrong?
-        *addr++ = *instr++;
+    while (byte) {
+        // New 16byte line with difference
+        if (*byte == ':') {
+            addr = (char*)axtoi(++byte);
+            byte += 8;
+        }
+
+        *addr++ = *byte++;
     }
-
     P1OUT ^= BIT0;
+
 }
 
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
@@ -66,3 +73,4 @@ void __attribute__ ((interrupt(PORT5_VECTOR))) Port_5 (void)
     }
     P5IFG |= 0;
 }
+
