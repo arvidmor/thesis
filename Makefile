@@ -29,8 +29,8 @@ TARGET = $(BUILDDIR)/app
 
 # Flags
 MMCU = msp430fr5994
-CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU) -mlarge  -mhwmult=f5series
-LDFLAGS = $(CFLAGS) -L$(LIB_DIRS) -mlarge -Xlinker -Map=$(BUILDDIR)/app.map
+CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU) -mlarge -mcode-region=upper -mdata-region=lower 
+LDFLAGS = $(CFLAGS) -L$(LIB_DIRS) -mlarge -Xlinker -Map=$(BUILDDIR)/app.map 
 
 # Build mode
 BUILD_DEBUG = 1
@@ -76,3 +76,4 @@ clean:
 	rm -f $(OBJS) $(TARGET) $(ASMS) $(BUILDDIR)/main.diff
 	rm -f $(TARGET).*
 	rm -rf $(OBJDIR)
+	rm -rf $(ASMDIR)

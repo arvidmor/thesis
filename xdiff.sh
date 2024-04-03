@@ -10,7 +10,7 @@
 
 # outfile:  0000010 0000 0000 0000 0000 2222 0000 0000 0000
 
-# Usage: ./xdiff.sh file1 file2 outfile
+# Usage: ./xdiff.sh oldFile newFile outfile
 diff <(hexdump -x $1) <(hexdump -x $2) \
 | awk '/---/{flag=1;next} flag {gsub(/    /, " "); print}' \
 | cut -c 3- > $3
