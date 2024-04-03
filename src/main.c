@@ -31,7 +31,7 @@ int main(void)
     long i = 0;
 
     while(1) {
-        if (i == 20000) {
+        if (i == 10000) {
             P1OUT ^= BIT0;                 // Toggle P1.0 using exclusive-OR
             i = 0;
         }
@@ -41,21 +41,16 @@ int main(void)
     return 0;
 }
 
-inline void P5_interrupt_callback() {
-    char* addr = (char*)axtoi(diff);
-    char* byte = diff+8;
+void P5_interrupt_callback() {
+    int* addr = (int *)(__UINTPTR_TYPE__)axtoi(diff);
+    int* instr = ((int*)diff)+8;
 
-    while (byte) {
-        // New 16byte line with difference
-        if (*byte == ':') {
-            addr = (char*)axtoi(++byte);
-            byte += 8;
-        }
-
-        *addr++ = *byte++;
+    while (instr) {
+        // TODO: wrong?
+        *addr++ = *instr++;
     }
-    P1OUT ^= BIT0;
 
+    P1OUT ^= BIT0;
 }
 
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
