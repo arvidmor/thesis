@@ -5,10 +5,11 @@
 \usepackage{csquotes}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
-% \usepackage{hyperref}
-
+\usepackage{hyperref}
 \usepackage[style=ieee, backend=biber]{biblatex}
 
+\setlength {\marginparwidth }{2cm}
+\usepackage[textsize=tiny]{todonotes}
 
 % Bibliography
 \addbibresource{sources.bib}
@@ -30,7 +31,9 @@
 \tableofcontents
 \newpage
 
-
+% Todo-list
+\listoftodos
+% Start of the report
 \section*{Abstract}
 \input{sections/abstract.tex}
 
