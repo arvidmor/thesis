@@ -56,6 +56,7 @@ dkms.conf
 .*
 !/.gitignore
 !/.vscode/
+vgcore.*
 
 # PDFS and stuff i cite in the report
 **/reference-pdfs

@@ -3,4 +3,7 @@
 
 int ishexdigit(char c);
 
-int axtoi(const char *num);
+int *axtoaddr(char **num_p);
+
+int axtoi16(char **num_p);
+

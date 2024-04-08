@@ -2,7 +2,7 @@
 #include <msp430.h>
 #include "utils.h"
 
-static char diff[256] ={0};
+static char diff[256] = {0};
 
 int main(void)
 {
@@ -31,26 +31,38 @@ int main(void)
     long i = 0;
 
     while(1) {
-        if (i == 10000) {
+        if (i == 20000) {
             P1OUT ^= BIT0;                 // Toggle P1.0 using exclusive-OR
             i = 0;
         }
         i++;
     }
 
-    return 0;
 }
 
-void P5_interrupt_callback() {
-    int* addr = (int *)(__UINTPTR_TYPE__)axtoi(diff);
-    int* instr = ((int*)diff)+8;
 
-    while (instr) {
-        // TODO: wrong?
-        *addr++ = *instr++;
+int update() {
+    // initial address and instruction
+    char* mc_p = diff;
+    int* addr = axtoaddr(&mc_p);
+
+    unsigned int val = 0;
+    while (*mc_p != '\0') {
+        // Get next microcode int 
+        val = axtoi16(&mc_p);
+        // Write to memory
+        *addr++ = val;
+
+        // If new address is coming
+        if (*mc_p == ';') {
+            mc_p++;
+            addr = axtoaddr(&mc_p);
+            if (addr == 0) {
+                return 1;
+            }
+        }
     }
-
-    P1OUT ^= BIT0;
+    return 0;
 }
 
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
@@ -63,7 +75,7 @@ void __attribute__ ((interrupt(PORT5_VECTOR))) Port_5 (void)
 #endif
 {
     if (P5IFG & BIT5) {
-        P5_interrupt_callback();
+        update();
         P5IFG &= ~BIT5; // Clear interrupt flag
     }
     P5IFG |= 0;
