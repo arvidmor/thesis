@@ -61,5 +61,7 @@ vgcore.*
 # PDFS and stuff i cite in the report
 **/reference-pdfs
 
-# CCS Project files
+# IDE and Ghidra files
 CCS/
+ghidra/
+

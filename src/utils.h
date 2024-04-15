@@ -1,9 +1,11 @@
-
 #pragma once
 
-int ishexdigit(char c);
+// Type aliases
+typedef struct diff_entry diff_entry_t;
+typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned long ulong;
 
-int *axtoaddr(char **num_p);
+void init_diff(char* diff);
 
-int axtoi16(char **num_p);
-
+int update(char* diff);

@@ -4,6 +4,7 @@
 
 static char diff[256] = {0};
 
+
 int main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;   // Stop WDT
@@ -28,41 +29,18 @@ int main(void)
 
     _BIS_SR(GIE);
 
-    long i = 0;
+    init_diff(diff);
+
+    long i = 20000;
 
     while(1) {
-        if (i == 20000) {
+        if (i == 0) {
             P1OUT ^= BIT0;                 // Toggle P1.0 using exclusive-OR
-            i = 0;
+            i = 20000;
         }
-        i++;
+        i--;
     }
 
-}
-
-
-int update() {
-    // initial address and instruction
-    char* mc_p = diff;
-    int* addr = axtoaddr(&mc_p);
-
-    unsigned int val = 0;
-    while (*mc_p != '\0') {
-        // Get next microcode int 
-        val = axtoi16(&mc_p);
-        // Write to memory
-        *addr++ = val;
-
-        // If new address is coming
-        if (*mc_p == ';') {
-            mc_p++;
-            addr = axtoaddr(&mc_p);
-            if (addr == 0) {
-                return 1;
-            }
-        }
-    }
-    return 0;
 }
 
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
@@ -75,7 +53,8 @@ void __attribute__ ((interrupt(PORT5_VECTOR))) Port_5 (void)
 #endif
 {
     if (P5IFG & BIT5) {
-        update();
+        // TODO: 
+        update(diff);
         P5IFG &= ~BIT5; // Clear interrupt flag
     }
     P5IFG |= 0;

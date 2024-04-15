@@ -59,8 +59,13 @@ $(TARGET).diff: $(OBJS)
 	@make all
 	./xdiff.sh $(TARGET).old $(TARGET) $@
 
+
 #### PHONIES ####
-.PHONY: all clean flash diff debug
+.PHONY: all clean flash diff debug test
+
+test: src/utils.c src/test.c
+	gcc -g -o test src/utils.c src/test.c
+	gdb test -ex 'b main' -ex 'r'
 
 all: $(TARGET)
 
