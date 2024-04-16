@@ -5,11 +5,41 @@
 \usepackage{csquotes}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
-\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
 \usepackage[textsize=tiny]{todonotes}
 \usepackage[style=ieee, backend=biber]{biblatex}
+\usepackage{hyperref}
 
 \setlength {\marginparwidth }{2cm}
+
+% Code listing style
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.68,0,0.92}
+\definecolor{backcolour}{rgb}{0.95, 0.95, 0.95}
+\definecolor{codeblue}{rgb}{0.2,0.4,1}
+\lstdefinestyle{mystyle}{
+    language=C,
+    morekeywords={diff_op_t},
+    backgroundcolor=\color{backcolour}, 
+    commentstyle=\color{codegray},
+    keywordstyle=\color{codepurple},
+    stringstyle=\color{codegreen},
+    % identifierstyle=\color{codeblue},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
 
 % Bibliography
 \addbibresource{sources.bib}
@@ -40,11 +70,12 @@
 \section{Introduction}
 \input{sections/introduction.tex}
 
-% \section{Background} % Maybe not needed 
-% \input{sections/background.tex}
 
 \section{Related Work}
 \input{sections/rel_work.tex}
+
+\section{Problem and Requirements} 
+\input{sections/requirements.tex}
 
 \section{Method}
 \input{sections/method.tex}
