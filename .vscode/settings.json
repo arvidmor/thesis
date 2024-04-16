@@ -54,5 +54,8 @@
         "typeinfo": "cpp",
         "utils.h": "c"
     },
-    "cSpell.enabled": true
+    "cSpell.enabled": true,
+    "cSpell.words": [
+        "FRAM"
+    ]
 }

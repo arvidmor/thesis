@@ -5,10 +5,10 @@
 #include "utils.h"
 
 typedef struct diff_entry {
-    uint* addr;
-    ushort words;
-    uint* mc_values;
-} diff_entry_t;
+    uint*  addr;
+    uint*  data;
+    ushort no_words;
+} diff_op_t;
 
 int hexval(char c) {
     if (c >= '0' && c <= '9') return c - '0';
@@ -57,25 +57,31 @@ int axtoi16(char **num_p) {
 }
 
 void init_diff(char* diff) {
+    #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+    char* diff_s = "010550-01:1388";
+    #elif defined(__GNUC__)
     char* diff_s = "01008c-01:1388";
+    #else
+    #error Compiler not supported!
+    #endif
     memcpy(diff, diff_s, strlen(diff_s));
 }
 
-diff_entry_t diff_entry_create(uint* addr, uint words) {
-    diff_entry_t entry;
-    entry.addr = addr;
-    entry.words = words;
-    entry.mc_values = malloc(words * sizeof(int));
-    return entry;
+diff_op_t diff_op_create(uint* addr, uint words) {
+    diff_op_t operation;
+    operation.addr = addr;
+    operation.no_words = words;
+    operation.data = malloc(words * sizeof(int));
+    return operation;
 }
 
-// Decode the diff string into an array of diff_entry_t
+// Decode the diff string into an array of diff_op_t
 // Returns the number of entries in the array
-int decode_diff(char* diff, diff_entry_t* diff_arr[], uint diff_size) {
+int decode(char* diff, diff_op_t* diff_arr[], uint diff_size) {
     // initial address and instruction
     char* mc_p = diff;
-    uint cur_entry_i = 0;
-    int max_entries = diff_size;
+    uint cur_op_i = 0;
+    int max_ops = diff_size;
     do {
         uint* addr = axtoaddr(&mc_p);
         // We should be pointing to a '-' now
@@ -86,11 +92,11 @@ int decode_diff(char* diff, diff_entry_t* diff_arr[], uint diff_size) {
 
         uint val = 0;
         // Resize the array if necessary
-        if (cur_entry_i >= max_entries) {
-            max_entries *= 2;
-            *diff_arr = realloc(diff_arr, max_entries);
+        if (cur_op_i >= max_ops) {
+            max_ops *= 2;
+            *diff_arr = realloc(diff_arr, max_ops);
         }
-        diff_entry_t cur_entry = diff_entry_create(addr, no_words);
+        diff_op_t cur_op = diff_op_create(addr, no_words);
         
         // We should be pointing to a ':'
         if (*mc_p++ != ':') {
@@ -102,13 +108,13 @@ int decode_diff(char* diff, diff_entry_t* diff_arr[], uint diff_size) {
         for (i = 0; i < no_words; i++) {
             // Store next microinstruction
             val = axtoi16(&mc_p);
-            cur_entry.mc_values[i] = val;
+            cur_op.data[i] = val;
         }
-        (*diff_arr)[cur_entry_i++] = cur_entry;
+        (*diff_arr)[cur_op_i++] = cur_op;
 
         // If no new instruction, we are done
         if (*mc_p != ';') {
-            max_entries = cur_entry_i;
+            max_ops = cur_op_i;
             break;
         }
         
@@ -116,28 +122,21 @@ int decode_diff(char* diff, diff_entry_t* diff_arr[], uint diff_size) {
         mc_p++;
 
     } while (*mc_p != '\0');
-    return max_entries;
+    return max_ops;
 }
 
-int apply_update(diff_entry_t* diff_arr, int diff_size) {
-    int i;
-    for (i = 0; i < diff_size; i++) {
-        diff_entry_t entry = diff_arr[i];
-        int j;
-        for (j = 0; j < entry.words; j++) {
-            // __data_20_write_char()
-            // __data_20_write_long()
-            // __data_20_write_short(entry.addr[j], entry.mc_values[j]);
-            entry.addr[j] = entry.mc_values[j];
-        }
+void apply(diff_op_t* diff_arr, int diff_size) {
+    int i = diff_size - 1;
+    for (; i > 0; i--) {
+        diff_op_t operation = diff_arr[i];
+        memcpy(operation.addr, operation.data, operation.no_words * sizeof(uint));
     }
-    return 0;
 }
 
-void destroy_diff(diff_entry_t* diff_arr, int diff_size) {
+void cleanup(diff_op_t* diff_arr, int diff_size) {
     int i;
     for (i = 0; i < diff_size; i++) {
-        free(diff_arr[i].mc_values);
+        free(diff_arr[i].data);
     }
     free(diff_arr);
 }
@@ -145,10 +144,10 @@ void destroy_diff(diff_entry_t* diff_arr, int diff_size) {
 
 int update(char* diff) {
     int size = 4;
-    diff_entry_t* diff_arr = malloc(size * sizeof(diff_entry_t));
+    diff_op_t* diff_arr = malloc(size * sizeof(diff_op_t));
 
-    size = decode_diff(diff, &diff_arr, size);
-    apply_update(diff_arr, size);
-    destroy_diff(diff_arr, size);
+    size = decode(diff, &diff_arr, size);
+    apply(diff_arr, size);
+    cleanup(diff_arr, size);
     return 0;
 }

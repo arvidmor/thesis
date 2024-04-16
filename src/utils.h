@@ -1,7 +1,7 @@
 #pragma once
 
 // Type aliases
-typedef struct diff_entry diff_entry_t;
+typedef struct diff_entry diff_op_t;
 typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned long ulong;
