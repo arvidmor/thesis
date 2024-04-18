@@ -1,12 +1,11 @@
 
 #include <msp430.h>
 #include "utils.h"
+#include "update.h"
 
 static char diff[256] = {0};
 
-
-int main(void)
-{
+static inline void gpio_init(void) {
     WDTCTL = WDTPW | WDTHOLD;   // Stop WDT
 
     // Disable the GPIO power-on default high-impedance mode to activate
@@ -26,7 +25,11 @@ int main(void)
     P5IE |= BIT5;   // Enable interrupt
     P5IES |= BIT5;  // high-to-low transition
     P5IFG &= 0;     // Clear flags
+}
 
+int main(void)
+{
+    gpio_init();
     _BIS_SR(GIE);
 
     init_diff(diff);

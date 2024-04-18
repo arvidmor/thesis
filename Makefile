@@ -22,7 +22,9 @@ DEBUG = LD_LIBRARY_PATH=$(DEBUG_DRIVERS_DIR) $(DEBUG_BIN_DIR)/mspdebug
 
 # Files
 SRCS = 	$(SRCDIR)/main.c \
-		$(SRCDIR)/utils.c
+	$(SRCDIR)/utils.c \
+	$(SRCDIR)/update.c 
+
 OBJS = $(SRCS:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 ASMS = $(SRCS:$(SRCDIR)/%.c=$(ASMDIR)/%.s)
 TARGET = $(BUILDDIR)/app
@@ -64,8 +66,8 @@ $(TARGET).diff: $(OBJS)
 .PHONY: all clean flash diff debug test
 
 test: src/utils.c src/test.c
-	gcc -g -o test src/utils.c src/test.c
-	gdb test -ex 'b main' -ex 'r'
+	gcc -g -o test.out src/utils.c src/update.c src/test.c
+	gdb test.out -ex 'b main' -ex 'r'
 
 all: $(TARGET)
 
