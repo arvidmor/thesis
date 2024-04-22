@@ -7,7 +7,7 @@ typedef enum {
     OK,
     ERR_DIFF_SYNTAX,
     ERR_DIFF_ALLOC,
-} DIFF_ERROR_T;
+} dsu_err_t;
 
-DIFF_ERROR_T decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size);
+dsu_err_t decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size);
 int update(char* diff);

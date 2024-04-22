@@ -1,9 +1,14 @@
 #include "utils.h"
 #include "update.h"
 
+
 #define ASSERT_CHAR(c_ptr, expected) if (*(*c_ptr)++ != expected) return ERR_DIFF_SYNTAX;
 #define ASSERT_ALLOC(ptr) if (ptr == NULL) return ERR_DIFF_ALLOC;
-
+/*
+This places the function in the .lower section, making it possible to shift the program code
+in higher memory regions if needed for an update.
+*/
+#define LOWER_ATOMIC __attribute__((critical, lower))
 typedef struct diff_entry {
     char  opcode;
     uint16_t* addr1;
@@ -11,7 +16,7 @@ typedef struct diff_entry {
     uint16_t  no_words;
 } diff_entry_t;
 
-DIFF_ERROR_T decode_w(diff_entry_t* diff_entry, char** diff_p) {
+dsu_err_t LOWER_ATOMIC decode_w(diff_entry_t* diff_entry, char** diff_p) {
     diff_entry->opcode = 'W';
     diff_entry->addr1 = axtoaddr(diff_p);
 
@@ -36,7 +41,7 @@ DIFF_ERROR_T decode_w(diff_entry_t* diff_entry, char** diff_p) {
     return OK;
 }
 
-DIFF_ERROR_T decode_s(diff_entry_t* diff_entry, char** diff_p) {
+dsu_err_t LOWER_ATOMIC decode_s(diff_entry_t* diff_entry, char** diff_p) {
     diff_entry->opcode = 'S';
     diff_entry->addr1 = axtoaddr(diff_p);
 
@@ -56,7 +61,7 @@ DIFF_ERROR_T decode_s(diff_entry_t* diff_entry, char** diff_p) {
 
 // Decode the diff string into an array of diff_op_t
 // Returns the number of entries in the array
-DIFF_ERROR_T decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size) {
+dsu_err_t LOWER_ATOMIC decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size) {
     // TODO: Remove need for dynamic memory allocation
     // initial address and instruction
     char* diff_p = diff;
@@ -66,7 +71,8 @@ DIFF_ERROR_T decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size) {
     do {
         // Resize the array if necessary
         if (cur_op_i >= max_ops) {
-            max_ops *= 2;
+            // Double the size of the array
+            max_ops <<= 1;
             *diff_arr = realloc(diff_arr, max_ops);
             ASSERT_ALLOC(diff_arr);
         }
@@ -99,25 +105,30 @@ DIFF_ERROR_T decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size) {
 }
 
 
-void apply(diff_entry_t* diff_arr) {
+void LOWER_ATOMIC apply(diff_entry_t* diff_arr) {
     int i = 0;
     char opcode;
+    uint16_t* src;
+    uint16_t* dst;
+    uint16_t size;
     do {
         diff_entry_t entry = diff_arr[i++];
         opcode = entry.opcode;
         switch (opcode) {
             // TODO: Look into optimizing with DMA
             case 'W':
+                src = entry.addr2;
+                dst = entry.addr1;
                 for (int j = 0; j < entry.no_words; j++) 
-                    entry.addr1[j] = entry.addr2[j];
-                
+                    dst[j] = src[j];
                 break;
 
             case 'S':
-                uint16_t* src = entry.addr1;
-                uint16_t* dst = entry.addr1 + entry.no_words;
-                uint16_t size = entry.addr2 - entry.addr1 + 1;
-                for (int j = size-1; j >= 0; j--) 
+                src = entry.addr1;
+                dst = entry.addr1 + entry.no_words;
+                size = entry.addr2 - entry.addr1;
+                // Loop in reverse to not overwrite upcoming iteration data
+                for (int j = size; j >= 0; j--) 
                     dst[j] = src[j];
                 
                 break;
@@ -128,7 +139,7 @@ void apply(diff_entry_t* diff_arr) {
     } while (opcode != 0);
 }
 
-void cleanup(diff_entry_t* diff_arr, int diff_size) {
+void LOWER_ATOMIC cleanup(diff_entry_t* diff_arr, int diff_size) {
     // TODO: Remove need for dynamic memory allocation
     int i;
     for (i = 0; i < diff_size; i++) {
@@ -138,11 +149,12 @@ void cleanup(diff_entry_t* diff_arr, int diff_size) {
     free(diff_arr);
 }
 
-int update(char* diff) {
+
+int LOWER_ATOMIC update(char* diff) {
     // TODO: Remove need for dynamic memory allocation
     int size = 4;
     diff_entry_t* diff_arr = calloc(size, sizeof(diff_entry_t));
-    DIFF_ERROR_T result = decode(diff, &diff_arr, size);
+    dsu_err_t result = decode(diff, &diff_arr, size);
     if (result != OK) {
         return result;
     }
