@@ -1,14 +1,6 @@
 #include "utils.h"
 #include "update.h"
 
-
-#define ASSERT_CHAR(c_ptr, expected) if (*(*c_ptr)++ != expected) return ERR_DIFF_SYNTAX;
-#define ASSERT_ALLOC(ptr) if (ptr == NULL) return ERR_DIFF_ALLOC;
-/*
-This places the function in the .lower section, making it possible to shift the program code
-in higher memory regions if needed for an update.
-*/
-#define LOWER_ATOMIC __attribute__((critical, lower))
 typedef struct diff_entry {
     char  opcode;
     uint16_t* addr1;
@@ -16,7 +8,22 @@ typedef struct diff_entry {
     uint16_t  no_words;
 } diff_entry_t;
 
-dsu_err_t LOWER_ATOMIC decode_w(diff_entry_t* diff_entry, char** diff_p) {
+
+// Static array to store diff entries and data
+#define MAX_ENTRIES 64
+#define MAX_DATA 1024
+static diff_entry_t diff_arr[MAX_ENTRIES];
+static uint16_t diff_data[MAX_DATA];
+
+#define ASSERT_CHAR(c_ptr, expected) if (*(*c_ptr)++ != expected) return ERR_DIFF_SYNTAX;
+#define ASSERT_OK(result) if ((result) != OK) return result;
+/*
+This places the function in the .lower section, making it possible to shift the program code
+in higher memory regions if needed for an update.
+*/
+#define LOWER_ATOMIC __attribute__((critical, lower))
+
+dsu_err_t LOWER_ATOMIC decode_w(diff_entry_t* diff_entry, uint16_t** data_p, char** diff_p) {
     diff_entry->opcode = 'W';
     diff_entry->addr1 = axtoaddr(diff_p);
 
@@ -27,16 +34,15 @@ dsu_err_t LOWER_ATOMIC decode_w(diff_entry_t* diff_entry, char** diff_p) {
     // This is a write op, so addr2 is an array containing the data to write
     uint16_t no_words = axtoi16(diff_p);
     diff_entry->no_words = no_words;
-    diff_entry->addr2 = malloc(no_words * sizeof(uint16_t));
-    ASSERT_ALLOC(diff_entry->addr2);
+    diff_entry->addr2 = *data_p;
 
     // We should be pointing to a 'w'
     ASSERT_CHAR(diff_p, 'w');
 
     // Next is data
-    int i = 0;
-    for (; i < no_words; i++) {
-        diff_entry->addr2[i] = axtoi16(diff_p);
+    uint16_t* max = diff_entry->addr2 + no_words;
+    for (; *data_p < max ;) {
+        *(*data_p)++ = axtoi16(diff_p);
     }
     return OK;
 }
@@ -61,34 +67,25 @@ dsu_err_t LOWER_ATOMIC decode_s(diff_entry_t* diff_entry, char** diff_p) {
 
 // Decode the diff string into an array of diff_op_t
 // Returns the number of entries in the array
-dsu_err_t LOWER_ATOMIC decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size) {
-    // TODO: Remove need for dynamic memory allocation
-    // initial address and instruction
+dsu_err_t LOWER_ATOMIC decode(char* diff) {
     char* diff_p = diff;
     uint16_t cur_op_i = 0;
-    int max_ops = diff_size;
+    uint16_t* data_p = diff_data;
     
     do {
-        // Resize the array if necessary
-        if (cur_op_i >= max_ops) {
-            // Double the size of the array
-            max_ops <<= 1;
-            *diff_arr = realloc(diff_arr, max_ops);
-            ASSERT_ALLOC(diff_arr);
+        // Makw sure we don't overflow the array
+        if (cur_op_i >= MAX_ENTRIES) {
+            return ERR_DIFF_OOM;
         }
 
         char opcode = *diff_p++;
         switch (opcode) {
             case 'W':
-                if (decode_w(&(*diff_arr)[cur_op_i], &diff_p) != OK) {
-                    return ERR_DIFF_SYNTAX;
-                }
+                ASSERT_OK(decode_w(&diff_arr[cur_op_i], &data_p, &diff_p) != OK)
                 break;
 
             case 'S':
-                if (decode_s(&(*diff_arr)[cur_op_i], &diff_p) != OK) {
-                    return ERR_DIFF_SYNTAX;
-                }
+                ASSERT_OK(decode_s(&diff_arr[cur_op_i], &diff_p) != OK)
                 break;
 
             default:
@@ -139,26 +136,13 @@ void LOWER_ATOMIC apply(diff_entry_t* diff_arr) {
     } while (opcode != 0);
 }
 
-void LOWER_ATOMIC cleanup(diff_entry_t* diff_arr, int diff_size) {
-    // TODO: Remove need for dynamic memory allocation
-    int i;
-    for (i = 0; i < diff_size; i++) {
-        if (diff_arr[i].opcode == 'W')
-            free(diff_arr[i].addr2);
-    }
-    free(diff_arr);
-}
-
-
-int LOWER_ATOMIC update(char* diff) {
-    // TODO: Remove need for dynamic memory allocation
-    int size = 4;
-    diff_entry_t* diff_arr = calloc(size, sizeof(diff_entry_t));
-    dsu_err_t result = decode(diff, &diff_arr, size);
-    if (result != OK) {
-        return result;
-    }
+dsu_err_t LOWER_ATOMIC update(char* diff) {
+    dsu_err_t result = decode(diff);
+    ASSERT_OK(result);
     apply(diff_arr);
-    cleanup(diff_arr, size);
+    // Clear arrays for future updates
+    memset(diff_arr, 0, MAX_ENTRIES * sizeof(diff_entry_t));
+    memset(diff_data, 0, MAX_DATA * sizeof(uint16_t));
+
     return OK;
 }

@@ -6,8 +6,8 @@ typedef struct diff_entry diff_entry_t;
 typedef enum {
     OK,
     ERR_DIFF_SYNTAX,
-    ERR_DIFF_ALLOC,
+    ERR_DIFF_OOM,
 } dsu_err_t;
 
-dsu_err_t decode(char* diff, diff_entry_t** diff_arr, uint16_t diff_size);
-int update(char* diff);
+dsu_err_t decode(char* diff);
+dsu_err_t update(char* diff);
