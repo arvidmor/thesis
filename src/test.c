@@ -10,9 +10,12 @@ __INT16_TYPE__ text[] = {
 __INT16_TYPE__ text2[] = {
     1,1,0,0
 };
+__INT16_TYPE__ text3[] = {
+    0,0,0,0
+};
 
 int main(void) {
-    sprintf(diff, "W%llx:0004w0002000300040005;S%llx-%llx:0002w", text, text2, text2+1);
+    sprintf(diff, "W%llx:0004w0001000200030004;S%llx-%llx:0002w;W%llx:0002w00010002;W%llx:0002w00030004", text, text2, text2+1, text3, text3+2);
 
     printf("Diff: %s\n", diff);
 
@@ -26,6 +29,10 @@ int main(void) {
     printf("\nText2:");
     for (int i = 0; i < 4; i++) {
         printf(" %hu", text2[i]);
+    }
+    printf("\nText3:");
+    for (int i = 0; i < 4; i++) {
+        printf(" %hu", text3[i]);
     }
     printf("\n");
     return 0;
