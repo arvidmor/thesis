@@ -2,7 +2,6 @@
 #include "utils.h"
 
 // Type aliases
-typedef struct diff_entry diff_entry_t;
 typedef enum {
     OK,
     ERR_DIFF_SYNTAX,

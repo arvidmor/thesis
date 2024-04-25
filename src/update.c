@@ -68,7 +68,7 @@ dsu_err_t LOWER_CRITICAL decode(char* diff) {
     uint16_t* data_p = diff_data;
     
     do {
-        // Makw sure we don't overflow the array
+        // Make sure we don't overflow the array
         if (cur_op_i >= MAX_ENTRIES) {
             return ERR_DIFF_OOM;
         }
@@ -85,7 +85,6 @@ dsu_err_t LOWER_CRITICAL decode(char* diff) {
 
             default:
                 return ERR_DIFF_SYNTAX;
-                break;
         }
         cur_op_i++;
         // If there are more operations, there should be a ';'
@@ -98,11 +97,12 @@ dsu_err_t LOWER_CRITICAL decode(char* diff) {
 
 
 void LOWER_CRITICAL apply(diff_entry_t* diff_arr) {
-    int i = 0;
+    uint16_t i = 0;
     char opcode;
     uint16_t* src;
     uint16_t* dst;
     uint16_t size;
+    int j;
     do {
         diff_entry_t entry = diff_arr[i++];
         opcode = entry.opcode;
@@ -111,7 +111,7 @@ void LOWER_CRITICAL apply(diff_entry_t* diff_arr) {
             case 'W':
                 src = entry.addr2;
                 dst = entry.addr1;
-                for (int j = 0; j < entry.no_words; j++) 
+                for (j = 0; j < entry.no_words; j++) 
                     dst[j] = src[j];
                 break;
 
@@ -120,7 +120,7 @@ void LOWER_CRITICAL apply(diff_entry_t* diff_arr) {
                 dst = entry.addr1 + entry.no_words;
                 size = entry.addr2 - entry.addr1;
                 // Loop in reverse to not overwrite upcoming iteration data
-                for (int j = size; j >= 0; j--) 
+                for (j = size; j >= 0; j--) 
                     dst[j] = src[j];
                 
                 break;
@@ -136,7 +136,7 @@ dsu_err_t LOWER_CRITICAL update(char* diff) {
     ASSERT_OK(result);
     apply(diff_arr);
     // Clear arrays for future updates
-    diff_entry_t zero = {0};
+    const diff_entry_t zero = {0};
     uint16_t size = 0;
     // Entry array
     while (size < MAX_ENTRIES)
