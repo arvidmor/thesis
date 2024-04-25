@@ -49,9 +49,9 @@ uint16_t LOWER_CRITICAL axtoi16(char **num_p) {
 
 void init_diff(char* diff) {
     #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
-    char* diff_s = "W010550:01w1388";
+    char* diff_s = "W010550:0001w1388";
     #elif defined(__GNUC__)
-    char* diff_s = "W01008c:01w1388";
+    char* diff_s = "W01008c:0001w1388";
     #else
     #error Compiler not supported!
     #endif
