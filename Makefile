@@ -31,7 +31,7 @@ TARGET = $(BUILDDIR)/app
 
 # Flags
 MMCU = msp430fr5994
-CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU) -mlarge -mcode-region=upper -mdata-region=lower 
+CFLAGS = -I$(INCLUDE_DIRS) -Wall -mmcu=$(MMCU) -mlarge -mcode-region=upper -mdata-region=lower -mhwmult=f5series
 LDFLAGS = $(CFLAGS) -L$(LIB_DIRS) -mlarge -Xlinker -Map=$(BUILDDIR)/app.map 
 
 # Build mode

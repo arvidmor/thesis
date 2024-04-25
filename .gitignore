@@ -62,6 +62,7 @@ vgcore.*
 **/reference-pdfs
 
 # IDE and Ghidra files
-CCS/
+CCS/*
+!CCS/lnk_msp430fr5994.cmd
 ghidra/
 
