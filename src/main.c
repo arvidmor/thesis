@@ -38,7 +38,7 @@ int main(void)
 
     while(1) {
         if (i == 0) {
-            P1OUT ^= BIT0;                 // Toggle P1.0 using exclusive-OR
+            P1OUT ^= BIT0; // Toggle LED
             i = 20000;
         }
         i--;
@@ -56,7 +56,6 @@ void __attribute__ ((interrupt(PORT5_VECTOR))) Port_5 (void)
 #endif
 {
     if (P5IFG & BIT5) {
-        // TODO: 
         update(diff);
         P5IFG &= ~BIT5; // Clear interrupt flag
     }

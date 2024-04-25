@@ -1,14 +1,14 @@
 
 #include "utils.h"
 
-uint16_t hexval(char c) {
+uint16_t LOWER_CRITICAL hexval(char c) {
     if (c >= '0' && c <= '9') return c - '0';
     if (c >= 'a' && c <= 'f') return c - 'a' + 10;
     if (c >= 'A' && c <= 'F') return c - 'A' + 10;
     return 0;
 }
 
-uint16_t ishexdigit(char c) {
+uint16_t LOWER_CRITICAL ishexdigit(char c) {
     return 
         (c >= '0' && c <= '9') || 
         (c >= 'a' && c <= 'f') || 
@@ -16,7 +16,7 @@ uint16_t ishexdigit(char c) {
 }
 
 // Convert a hex string to an integer and update the pointer to the first character after the number
-uint16_t *axtoaddr(char **num_p) {
+uint16_t LOWER_CRITICAL *axtoaddr(char **num_p) {
     ulong value = 0;
     char *cur_c = *num_p;
     while (ishexdigit(*cur_c))
@@ -26,7 +26,7 @@ uint16_t *axtoaddr(char **num_p) {
     return (uint16_t*)(uintptr_t)value;
 }
 
-uchar axtoi8(char **num_p) {
+uchar LOWER_CRITICAL axtoi8(char **num_p) {
     char *cur_c = *num_p;
     unsigned char val = (hexval(*cur_c++) << 4);
     val += hexval(*cur_c++);
@@ -36,7 +36,7 @@ uchar axtoi8(char **num_p) {
 
 // Converts 4 hex characters to an integer of 16 bits, updating the pointer to the next character
 // Assumes there are at least 4 chars to convert in *num_p
-uint16_t axtoi16(char **num_p) {
+uint16_t LOWER_CRITICAL axtoi16(char **num_p) {
     char *cur_c = *num_p;
     uint val = 0;
     uint i;

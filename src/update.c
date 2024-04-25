@@ -17,13 +17,8 @@ static uint16_t diff_data[MAX_DATA];
 
 #define ASSERT_CHAR(c_ptr, expected) if (*(*c_ptr)++ != expected) return ERR_DIFF_SYNTAX;
 #define ASSERT_OK(result) if ((result) != OK) return result;
-/*
-This places the function in the .lower section, making it possible to shift the program code
-in higher memory regions if needed for an update.
-*/
-#define LOWER_ATOMIC __attribute__((critical, lower))
 
-dsu_err_t LOWER_ATOMIC decode_w(diff_entry_t* diff_entry, uint16_t** data_p, char** diff_p) {
+dsu_err_t LOWER_CRITICAL decode_w(diff_entry_t* diff_entry, uint16_t** data_p, char** diff_p) {
     diff_entry->opcode = 'W';
     diff_entry->addr1 = axtoaddr(diff_p);
 
@@ -47,7 +42,7 @@ dsu_err_t LOWER_ATOMIC decode_w(diff_entry_t* diff_entry, uint16_t** data_p, cha
     return OK;
 }
 
-dsu_err_t LOWER_ATOMIC decode_s(diff_entry_t* diff_entry, char** diff_p) {
+dsu_err_t LOWER_CRITICAL decode_s(diff_entry_t* diff_entry, char** diff_p) {
     diff_entry->opcode = 'S';
     diff_entry->addr1 = axtoaddr(diff_p);
 
@@ -67,7 +62,7 @@ dsu_err_t LOWER_ATOMIC decode_s(diff_entry_t* diff_entry, char** diff_p) {
 
 // Decode the diff string into an array of diff_op_t
 // Returns the number of entries in the array
-dsu_err_t LOWER_ATOMIC decode(char* diff) {
+dsu_err_t LOWER_CRITICAL decode(char* diff) {
     char* diff_p = diff;
     uint16_t cur_op_i = 0;
     uint16_t* data_p = diff_data;
@@ -102,7 +97,7 @@ dsu_err_t LOWER_ATOMIC decode(char* diff) {
 }
 
 
-void LOWER_ATOMIC apply(diff_entry_t* diff_arr) {
+void LOWER_CRITICAL apply(diff_entry_t* diff_arr) {
     int i = 0;
     char opcode;
     uint16_t* src;
@@ -136,13 +131,20 @@ void LOWER_ATOMIC apply(diff_entry_t* diff_arr) {
     } while (opcode != 0);
 }
 
-dsu_err_t LOWER_ATOMIC update(char* diff) {
+dsu_err_t LOWER_CRITICAL update(char* diff) {
     dsu_err_t result = decode(diff);
     ASSERT_OK(result);
     apply(diff_arr);
     // Clear arrays for future updates
-    memset(diff_arr, 0, MAX_ENTRIES * sizeof(diff_entry_t));
-    memset(diff_data, 0, MAX_DATA * sizeof(uint16_t));
+    diff_entry_t zero = {0};
+    uint16_t size = 0;
+    // Entry array
+    while (size < MAX_ENTRIES)
+        diff_arr[size++] = zero;
+    // Data array
+    size = 0;
+    while (size < MAX_DATA)
+        diff_data[size++] = 0;
 
     return OK;
 }
