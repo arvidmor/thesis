@@ -1,0 +1,10 @@
+Diff string:
+S00043B6-0004436:0009w;W00043B6:0009wB0F20040025C240550B203E8280063822802
+
+Stats:
+diff file size (bytes) = 74
+no. bytes written = 186
+no. cycles: 
+total   Decode	Apply   Destroy
+21908   3991	3056    14861
+without destroy = 7047

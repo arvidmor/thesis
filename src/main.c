@@ -5,6 +5,9 @@
 
 static char diff[256] = {0};
 
+__attribute((section(".data"))) static long init_green = 20000;
+__attribute((section(".data"))) static long init_red = 20000;
+
 static inline void gpio_init(void) {
     WDTCTL = WDTPW | WDTHOLD;   // Stop WDT
 
@@ -14,16 +17,16 @@ static inline void gpio_init(void) {
 
     // Configure GPIO
     // LED (P1.0)
-    P1OUT &= 0;  // Set P1.0 to high 
-    P1DIR |= BIT0;  // Set P1.0 to output direction
+    P1OUT = BIT0;  // Set P1.0 to high
+    P1DIR |= (BIT0 | BIT1);  // Set P1.0-1 to output direction
 
-    // Button P5.5
-    P5REN |= BIT5;  // Enable pull-up resistor on P5.6
-    P5OUT |= BIT5;   // Set P5.5 to high
+    // Button P5.5 and P5.6
+    P5REN |= (BIT5 | BIT6);  // Enable pull-up resistor
+    P5OUT |= (BIT5 | BIT6);   // Set P5.5 to high
 
-    // Enable interrupts on P5.5
-    P5IE |= BIT5;   // Enable interrupt
-    P5IES |= BIT5;  // high-to-low transition
+    // Enable interrupts on P5.5 & P5.6
+    P5IE |= (BIT5 | BIT6);   // Enable interrupt
+    P5IES |= (BIT5 | BIT6);  // high-to-low transition
     P5IFG &= 0;     // Clear flags
 }
 
@@ -34,14 +37,19 @@ int main(void)
 
     init_diff(diff);
 
-    long i = 20000;
-
+    long i = init_red;
+    long j = init_green;
     while(1) {
         if (i == 0) {
             P1OUT ^= BIT0; // Toggle LED
-            i = 20000;
+            i = init_red;
+        }
+        if (j == 0) {
+            P1OUT ^= BIT1; // Toggle LED2
+            j = init_green;
         }
         i--;
+        j--;
     }
 
 }
@@ -55,12 +63,9 @@ void __attribute__ ((interrupt(PORT5_VECTOR))) Port_5 (void)
 #error Compiler not supported!
 #endif
 {
-    if (P5IFG & BIT5) {
+    if (P5IFG & BIT5) { // Button 1 pressed
         update(diff);
-        P5IFG &= ~BIT5; // Clear interrupt flag
     }
-    P5IFG |= 0;
-}
 
-//TODO: Add interrupt handler for 2nd button press
-//TODO: DSU should add functionality to this handler
+    P5IFG &= 0; // Clear interrupt flag
+}

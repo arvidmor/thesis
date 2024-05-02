@@ -135,16 +135,19 @@ dsu_err_t LOWER_CRITICAL update(char* diff) {
     dsu_err_t result = decode(diff);
     ASSERT_OK(result);
     apply(diff_arr);
+    //TODO: Maybe the arrays shouldn't be cleared?
     // Clear arrays for future updates
-    const diff_entry_t zero = {0};
-    uint16_t size = 0;
+    uint16_t i = 0;
+    uint16_t* entries = (uint16_t*)diff_arr;
+    // Number of 16bit entries in diff_arr
+    const uint16_t size = (MAX_ENTRIES * sizeof(diff_entry_t)) >> 1;
     // Entry array
-    while (size < MAX_ENTRIES)
-        diff_arr[size++] = zero;
+    while (i < size)
+        entries[i++] = 0;
     // Data array
-    size = 0;
-    while (size < MAX_DATA)
-        diff_data[size++] = 0;
+    i = 0;
+    while (i < MAX_DATA)
+        diff_data[i++] = 0;
 
     return OK;
 }
