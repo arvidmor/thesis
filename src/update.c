@@ -87,11 +87,12 @@ dsu_err_t LOWER_CRITICAL decode(char* diff) {
                 return ERR_DIFF_SYNTAX;
         }
         cur_op_i++;
-        // If there are more operations, there should be a ';'
-        if (*diff_p++ != ';') 
-            break;
 
-    } while (*diff_p != '\0');
+    } while (*diff_p++ != '\0');
+
+    // Place a 'null-entry' at the end
+    diff_arr[cur_op_i].opcode = 0;
+
     return OK;
 }
 
@@ -134,20 +135,8 @@ void LOWER_CRITICAL apply(diff_entry_t* diff_arr) {
 dsu_err_t LOWER_CRITICAL update(char* diff) {
     dsu_err_t result = decode(diff);
     ASSERT_OK(result);
+
     apply(diff_arr);
-    //TODO: Maybe the arrays shouldn't be cleared?
-    // Clear arrays for future updates
-    uint16_t i = 0;
-    uint16_t* entries = (uint16_t*)diff_arr;
-    // Number of 16bit entries in diff_arr
-    const uint16_t size = (MAX_ENTRIES * sizeof(diff_entry_t)) >> 1;
-    // Entry array
-    while (i < size)
-        entries[i++] = 0;
-    // Data array
-    i = 0;
-    while (i < MAX_DATA)
-        diff_data[i++] = 0;
 
     return OK;
 }

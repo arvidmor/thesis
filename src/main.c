@@ -3,9 +3,10 @@
 #include "utils.h"
 #include "update.h"
 
+__attribute__((noinit))
 static char diff[256] = {0};
 
-__attribute((section(".data"))) static long init_green = 20000;
+__attribute((section(".data"))) volatile static long init_green = 20000;
 __attribute((section(".data"))) static long init_red = 20000;
 
 static inline void gpio_init(void) {
