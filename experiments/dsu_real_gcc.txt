@@ -1,0 +1,11 @@
+Diff string:
+S44F8-450C:000Bw;W44F6:000Cw2011B0F20040025C2407184050B203E81C04184063821C06
+
+Stats:
+diff file size (bytes) = 77
+no. bytes written = 46
+no. cycles: 
+total   Decode	Apply   
+6151    5357    794
+
+ms (no destroy, 8MHz) = 0,763375

@@ -37,7 +37,7 @@ LDFLAGS = $(CFLAGS) -L$(LIB_DIRS) -mlarge -Xlinker -Map=$(BUILDDIR)/app.map
 # Build mode
 BUILD_DEBUG = 1
 ifeq ($(BUILD_DEBUG), 1)
-	CFLAGS += -gdwarf -g
+	CFLAGS += -Og -g -gdwarf-3 -gstrict-dwarf 
 else 
 	CFLAGS += -O2
 endif
