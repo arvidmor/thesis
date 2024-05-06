@@ -1,0 +1,21 @@
+This section describes in further detail some key concepts that are relevant to the research, and provides a more detailed problem statement and requirements for the project.
+
+\subsubsection*{The platform}\label{sec:platform}
+The platform used for the experiments in this project is the Texas Instruments MSP430FR5994 16MHz microcontroller. The MSP430FR5994 features a 16-bit RISC architecture and is equipped with 256KB of FRAM (Ferroelectric Random Access Memory), 8KB of SRAM, and 2KB of flash memory. The relatively large FRAM is particularly useful for this project since it is a non-volatile memory which at the same time provides high speed writes and low power consumption. This comes as a result of FRAM being writeable in a \todo{double check, byte- or word-wise?}byte-wise manner, as opposed to Flash memory or EEPROM which requires entire pages to be erased before new data can be written, slowing down the operations \cite{framReport}. A side-effect of FRAM being non-volatile is that the binary image of the program is stored in the same place that it is executed from, and can be updated in-place with little overhead. 
+
+One drawback of FRAM is that accesses to it are limited to 8MHz. Thus, if the microcontroller is running at 16MHz, the CPU will be stalled for every access to FRAM. This is a limitation that must be considered when measuring the performance of the update process.
+\todo{Why is this interesting for DSU?}
+
+
+\subsubsection*{Problem statement}
+As described in previous sections, DSU in embedded and real-time systems is not a new concept, but there are some key aspects that are yet to be considered in the field. 
+
+Firstly; the currently existing work in the field of DSU have been focused on systems with more relaxed real-time requirements, where the overhead of the update process is not as critical. This project aims to investigate the use of DSU in systems with tighter real-time deadlines, where the overhead of the update process must be kept to a minimum.
+
+Secondly; to meet these deadlines, the utilisation of FRAM is proposed as a potential solution, and this research aims to investigate the performance impact that the technology has on the update process.  
+
+\subsubsection*{Requirements}
+As a way of containing the scope of the project, and to provide a clear goal for the research, the requirements of the work need to be clearly defined. There are a multitude of requirements to consider in the context of DSU, both functional and non-functional. Mlinarić describes in \cite{dsuChallenges} five key requirements for any DSU implementation, namely: \textit{Availability}, \textit{Correctness}, \textit{Flexibility}, \textit{Performance}, and \textit{Simplicity}. In addition to these general requirements for DSU, there are also requirements that are specific to the context of embedded systems, which may be considered subcategories of the above; \textit{Energy efficiency}, \textit{Memory usage}, and \textit{Security}.
+\todo{Maybe expand on these}
+
+The main focus of this research is the performance of the update process, however other aspects such as security and correctness are considered when evaluating the results, as they are factors which may impact the performance, and thus, the feasibility of the solution.

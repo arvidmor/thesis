@@ -1,6 +1,4 @@
-\todo{This goes in background section}
-\subsection{The Platform}\label{sec:platform}
-The platform used for the experiments in this project is the Texas Instruments MSP430FR5994 16MHz microcontroller. The MSP430FR5994 features a 16-bit RISC architecture and is equipped with 256KB of FRAM (Ferroelectric Random Access Memory), 8KB of SRAM, and 2KB of flash memory. The relatively large FRAM is particularly useful for this project since it is a non-volatile memory which at the same time provides high speed writes and low power consumption. This comes as a result of FRAM being writeable in a \todo{double check, byte- or word-wise?}byte-wise manner, as opposed to Flash memory or EEPROM which requires entire pages to be erased before new data can be written, slowing down the operations \cite{framReport}. A side-effect of FRAM being non-volatile is that the binary image of the program is stored in the same place that it is executed from, and can be updated in-place with little overhead. \todo{Why is this interesting for DSU?}
+\todo{Section introduction}
 
 \subsection{Patch file}\label{sec:patchfile}
 To meet the requirements of timeliness and memory usage, an efficient way of describing the update is essential. The method chosen for this project is to use a patch file that describes the changes to be made to the binary image.
