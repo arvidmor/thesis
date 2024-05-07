@@ -1,0 +1,42 @@
+This section presents the results of the experiments conducted in this project. The experiments were designed to evaluate the performance of the DSU process in the context of embedded systems, and to investigate the impact of using FRAM as the storage medium for the update process. The main focus of the experiments was to measure the time it takes to perform the update process, and evaluate if the procedure is feasible in a real-time system.
+
+All of the below experiments were conducted on the Texas Instruments MSP430FR5994 microcontroller, running at various clock frequencies. The microcontroller was programmed using the Code Composer Studio IDE, and the data was gathered using the built-in debugging tools. The time estimates were not measured directly but instead calculated based on the number of clock cycles spent in each part of the update process. 
+
+\subsection{Experiments}
+Firstly, to demonstrate the feasibility of the DSU process, a simple update was constructed which changes a single word in the binary image and makes the LED of the launchpad blink at a different frequency. 
+\todo{data}
+As expected from such a small update, the time it takes to perform the update is very short, with the majority of time spent in the decoding phase. 
+
+As a more interesting proof-of-concept, a larger update was constructed which changes the behaviour of the LED blinking and introduces new functionality to the application. The application pre-update simply blinks both LEDs on the launchpad at a fixed, synchronized frequency. The post-update application adds functionality to a button on the microcontroller. When pressed changes the blinking frequency of one of the LEDs and makes them unsynchronized, thus providing a more complex update scenario which also has the benefit of being visibly verifiable. 
+
+\noindent\begin{minipage}{.45\textwidth}
+\begin{lstlisting}[
+    caption={The interrupt service routine before DSU.},
+    label={lst:pre_dsu_isr}
+]
+if (P5IFG & BIT5)
+{ // Button 1 pressed
+    update(diff);
+}
+
+P5IFG &= 0; // Clear interrupt flag
+\end{lstlisting}
+\end{minipage}\hfill
+\noindent\begin{minipage}{.45\textwidth}
+\begin{lstlisting}[
+    caption={The interrupt service routine after DSU.},
+    label={lst:post_dsu_isr}
+]
+if (P5IFG & BIT5)
+{ // Button 1 pressed
+    update(diff);
+} if (P5IFG & BIT6)
+{ // Button 2 pressed
+    green_freq += 1000;
+}
+
+P5IFG &= 0; // Clear interrupt flag
+\end{lstlisting}
+\end{minipage}\hfill
+
+This proof-of-concept is still relatively simple, requiring only a single \textbf{shift}- and \textbf{write} operation each, but it demonstrates the potential of the DSU process.
