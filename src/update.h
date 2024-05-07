@@ -4,9 +4,9 @@
 // Type aliases
 typedef enum {
     OK,
-    ERR_DIFF_SYNTAX,
-    ERR_DIFF_OOM,
-} dsu_err_t;
+    E_SYNTAX,
+    E_OOM,
+} DSUERR;
 
-dsu_err_t decode(char* diff);
-dsu_err_t update(char* diff);
+DSUERR decode(char* diff);
+DSUERR update(char* diff);
