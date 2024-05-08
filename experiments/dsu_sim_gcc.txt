@@ -1,0 +1,42 @@
+WRITE  
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           1374            189
+1               2           1691            204
+1               4           2325            234
+1               8           3593            294
+1               16          6129            414
+1               32          11201           654
+1               64          21345           1134
+1               128         41633           2094
+1               256         82209           4014       
+
+2               2           2679            273
+4               4           5289            441
+8               8           10614           777
+16              16          21121           1449
+32              32          42183           2793
+64              64          84273           5295
+128             128          
+256             256         
+
+SHIFT (500 word forward) (init to random numbers)
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           1637            193
+1               2           1637            210
+1               4           1637            244
+1               8           1637            312
+1               16          1637            448
+1               32          1637            720
+1               64          1637            1264
+1               128         1637            2352
+1               256         1637            4528
+1               512         1637            8880
+
+2               2           3205            281
+4               4           6341            457
+8               8           12745           809
+16              16          25421           1513
+32              32          50773           2921
+
+Changing the 'width' of the shift does not meaningfully impact 
+the decode time
