@@ -25,4 +25,4 @@ uint16_t ishexdigit(char c);
 uint16_t *axtoaddr(char **num_p);
 unsigned char axtoi8(char **num_p);
 uint16_t axtoi16(char **num_p);
-void init_diff(char *diff);
+void init_arrays(char *diff, uint16_t *sim_data);

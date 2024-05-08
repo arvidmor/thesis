@@ -1,3 +1,4 @@
+#include <msp430.h>
 #include "utils.h"
 #include "update.h"
 
@@ -12,8 +13,8 @@ typedef struct
 // Static array to store diff entries and data
 #define MAX_ENTRIES 64
 #define MAX_DATA 1024
-static diff_entry_t diff_arr[MAX_ENTRIES];
-static uint16_t diff_data[MAX_DATA];
+__no_init static diff_entry_t diff_arr[MAX_ENTRIES];
+__no_init static uint16_t diff_data[MAX_DATA];
 
 #define ASSERT_CHAR(c_ptr, expected) \
     if (*(*c_ptr)++ != expected)     \

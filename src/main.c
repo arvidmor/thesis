@@ -2,11 +2,16 @@
 #include <msp430.h>
 #include "utils.h"
 #include "update.h"
+#define MAX_DATA 1024
+#define MAX_DIFF 1024
 
-__attribute__((noinit)) static char diff[256] = {0};
+__no_init static char diff[MAX_DIFF];
+__section(".upper.data") static uint16_t sim_data[MAX_DATA];
 
-__attribute((section(".data"))) volatile static long init_green = 20000;
-__attribute((section(".data"))) static long init_red = 20000;
+// __attribute((section(".data")))
+// __attribute((section(".data")))
+volatile static long init_green = 20000;
+volatile static long init_red = 20000;
 
 static inline void gpio_init(void)
 {
@@ -36,7 +41,7 @@ int main(void)
     gpio_init();
     _BIS_SR(GIE);
 
-    init_diff(diff);
+    init_arrays(diff, sim_data);
 
     long i = init_red;
     long j = init_green;

@@ -25,7 +25,7 @@ uint16_t LOWER_CRITICAL *axtoaddr(char **num_p)
     unsigned long value = 0;
     char *cur_c = *num_p;
     while (ishexdigit(*cur_c))
-        value = (value << 4) + hexval(*cur_c++);
+        value = (value * 16) + hexval(*cur_c++);
 
     *num_p = cur_c;
     return (uint16_t *)(uintptr_t)value;
@@ -36,7 +36,7 @@ uint16_t LOWER_CRITICAL *axtoaddr(char **num_p)
 unsigned char LOWER_CRITICAL axtoi8(char **num_p)
 {
     char *cur_c = *num_p;
-    unsigned char val = (hexval(*cur_c++) << 4);
+    unsigned char val = hexval(*cur_c++) * 16;
     val += hexval(*cur_c++);
     *num_p = cur_c;
     return val;
@@ -51,13 +51,13 @@ uint16_t LOWER_CRITICAL axtoi16(char **num_p)
     uint16_t i;
     for (i = 0; i < 4; i++)
     {
-        val = (val << 4) + hexval(*cur_c++);
+        val = (val * 16) + hexval(*cur_c++);
     }
     *num_p = cur_c;
     return val;
 }
 
-void init_diff(char *diff)
+void init_arrays(char *diff, uint16_t *sim_data)
 {
 #if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
     char *diff_s = "S0004392-000443a:0009w;W0004392:0009wB0F20040025C240550B203E8280063822802";
@@ -66,5 +66,13 @@ void init_diff(char *diff)
 #else
 #error Compiler not supported!
 #endif
+    int i;
+    uint16_t x;
+    for (i = 0; i < 1024; i++) {
+        x = ((x >> 16) ^ x) * 0x9f3b;
+        x = ((x >> 16) ^ x) * 0x9f3b;
+        x = (x >> 16) ^ x;
+        sim_data[i] = x;
+    }
     memcpy(diff, diff_s, strlen(diff_s) + 1);
 }
