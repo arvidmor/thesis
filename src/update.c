@@ -42,7 +42,7 @@ DSUERR LOWER_CRITICAL decode_w(diff_entry_t *diff_entry, uint16_t **data_p, char
 
     // Next is data
     uint16_t *max = diff_entry->addr2 + no_words;
-    for (; *data_p < max;)
+    while (*data_p < max)
     {
         *(*data_p)++ = axtoi16(diff_p);
     }

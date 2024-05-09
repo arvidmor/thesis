@@ -66,19 +66,5 @@ void init_arrays(char *diff, uint16_t *sim_data)
 #error Compiler not supported!
 #endif
 
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wshift-count-overflow"
-    int i;
-    uint16_t x;
-    for (i = 0; i < 1024; i++) {
-        x = ((x >> 16) ^ x) * 0x9f3b;
-        x = ((x >> 16) ^ x) * 0x9f3b;
-        x = (x >> 16) ^ x;
-        sim_data[i] = x;
-    }
-    #pragma GCC diagnostic pop
-    #pragma GCC diagnostic pop
     memcpy(diff, diff_s, strlen(diff_s) + 1);
 }

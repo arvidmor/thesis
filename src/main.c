@@ -1,5 +1,6 @@
 
 #include <msp430.h>
+#include "init.h"
 #include "utils.h"
 #include "update.h"
 #define MAX_DATA 1024
@@ -10,10 +11,10 @@ __section(".upper.data") static uint16_t sim_data[MAX_DATA];
 
 // __attribute((section(".data")))
 // __attribute((section(".data")))
-volatile static long init_green = 20000;
-volatile static long init_red = 20000;
+volatile static long init_green = 500000;
+volatile static long init_red = 500000;
 
-static inline void gpio_init(void)
+void gpio_init(void)
 {
     WDTCTL = WDTPW | WDTHOLD; // Stop WDT
 
@@ -38,7 +39,11 @@ static inline void gpio_init(void)
 
 int main(void)
 {
+    cs_init();
+    // cs_init_8mhz();
     gpio_init();
+
+    // Enable interrupts
     _BIS_SR(GIE);
 
     init_arrays(diff, sim_data);
