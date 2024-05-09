@@ -1,0 +1,79 @@
+WRITE (8MHz)
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           1221            146
+1               2           1514            158
+1               4           2100            182
+1               8           3272            230
+1               16          5616            326
+1               32          10304           518
+1               64          19680           902
+1               128         38432           1670
+1               256         75936           3206
+
+2               2           2389            202
+4               4           4725            314
+8               8           9475            538
+16              16          18870           986
+32              32          37687           1882
+64              64          75321           3561
+
+
+WRITE (16MHz)
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           1495            174
+1               2           1867            191
+1               4           2591            217
+1               8           4039            269
+1               16          6935            373
+1               32          12727           581
+1               64          24311           997
+1               128         47479           1829
+1               256         93815           3493
+
+2               2           2927            244
+4               4           5819            389
+8               8           11596           667
+16              16          23102           1227
+32              32          46141           2347
+64              64          92226           4448
+
+SHIFT (500 word forward) (init to random numbers) (8MHz)
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           1443            146
+1               2           1443            158
+1               4           1443            182
+1               8           1443            230
+1               16          1443            326
+1               32          1443            518
+1               64          1443            902
+1               128         1443            1670
+1               256         1443            3206
+1               512         1443            6278
+
+2               2           2799            202
+4               4           5545            314
+8               8           11139           538
+16              16          22225           986
+32              32          44397           1882
+
+SHIFT (1 word forward) (init to random numbers) (16MHz)
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           1761            178
+1               2           1761            194
+1               4           1761            225
+1               8           1761            281
+1               16          1761            400
+1               32          1761            638
+1               64          1761            1114
+1               128         1761            2066
+1               256         1761            3970
+1               512         1761            7778
+
+2               2           3466            253
+4               4           6855            394
+8               8           13739           679
+16              16          27415           1251
+32              32          54767           2395
+
+Changing the 'width' of the shift does not meaningfully impact 
+the decode time

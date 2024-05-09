@@ -1,4 +1,4 @@
-WRITE  
+WRITE (8MHz)
 NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
 1               1           1374            189
 1               2           1691            204
@@ -16,10 +16,28 @@ NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
 16              16          21121           1449
 32              32          42183           2793
 64              64          84273           5295
-128             128          
-256             256         
 
-SHIFT (500 word forward) (init to random numbers)
+
+WRITE (16MHz)
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           
+1               2           2102            243
+1               4           2890            275
+1               8           4466            339
+1               16          7618            467
+1               32          13922           723
+1               64          26530           1235
+1               128         51746           2259
+1               256         102178          4307
+
+2               2           3318            329
+4               4           6571            534
+8               8           13197           933
+16              16          26257           1741
+32              32          52431           3357
+64              64          104779          6368
+
+SHIFT (500 word forward) (init to random numbers) (8MHz)
 NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
 1               1           1637            193
 1               2           1637            210
@@ -37,6 +55,25 @@ NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
 8               8           12745           809
 16              16          25421           1513
 32              32          50773           2921
+
+SHIFT (1 word forward) (init to random numbers) (16MHz)
+NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+1               1           2015            234
+1               2           2015            255
+1               4           2015            296
+1               8           2015            377
+1               16          2015            540
+1               32          2015            868
+1               64          2015            1524
+1               128         2015            2836
+1               256         2015            5460
+1               512         2015            10708
+
+2               2           3968            339
+4               4           7811            554
+8               8           15771           1001
+16              16          31459           1877
+32              32          62835           3629
 
 Changing the 'width' of the shift does not meaningfully impact 
 the decode time

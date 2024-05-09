@@ -16,6 +16,9 @@ The \textit{diff} file is a text file that describes the changes to be made to t
 \end{tabular}
 \end{center}
 As the operations work fundamentally differently, the semantics of the fields of the \textit{diff} file depend on the operation. As an example, for a \textbf{Write} operation, the \textbf{No. words} describes the length of the data field, while for a \textbf{Shift} operation, it describes the offset to shift by.
+
+\todo{Removing leading zeroes from no\_words arg is slower due to overhead of determining how long the number is}
+
 \subsection{The update procedure}\label{sec:updateprocedure}
 With the main requirements of the implementation defined, the next step is to design an update procedure that meets the these requirements. The update procedure is the part of the process that is responsible for applying the patch file to the application. This is where the majority of the research conducted was focused. Firstly, for robustness and to simplify the implementation and testing, the update procedure was split into two phases: \textbf{Decode}, and \textbf{Apply}. This separation allows for the \textit{diff} file to be decoded and verified before the actual update is applied, an important property since the update procedure must be able to handle errors in the patch file, such as corruption or tampering. It also benefits debugging and profiling of the procedure, as the two phases can be tested separately. The following sections will describe these phases in further detail. 
 
