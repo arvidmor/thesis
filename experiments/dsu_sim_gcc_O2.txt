@@ -1,5 +1,5 @@
-WRITE (8MHz)
-NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+WRITE 8MHz
+NO_OPERATIONS   NO_WORDS    CYCLES_DECODE   CYCLES_APPLY
 1               1           1221            146
 1               2           1514            158
 1               4           2100            182
@@ -18,8 +18,8 @@ NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
 64              64          75321           3561
 
 
-WRITE (16MHz)
-NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+WRITE 16MHz
+NO_OPERATIONS   NO_WORDS    CYCLES_DECODE   CYCLES_APPLY
 1               1           1495            174
 1               2           1867            191
 1               4           2591            217
@@ -37,8 +37,9 @@ NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
 32              32          46141           2347
 64              64          92226           4448
 
-SHIFT (500 word forward) (init to random numbers) (8MHz)
-NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+SHIFT 8MHz 
+(500 word forward) (init to random numbers)
+NO_OPERATIONS   NO_WORDS    CYCLES_DECODE   CYCLES_APPLY
 1               1           1443            146
 1               2           1443            158
 1               4           1443            182
@@ -56,8 +57,9 @@ NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
 16              16          22225           986
 32              32          44397           1882
 
-SHIFT (1 word forward) (init to random numbers) (16MHz)
-NO OPERATIONS   NO WORDS    CYCLES DECODE   CYCLES APPLY
+SHIFT 16MHz 
+(1 word forward) (init to random numbers)
+NO_OPERATIONS   NO_WORDS    CYCLES_DECODE   CYCLES_APPLY
 1               1           1761            178
 1               2           1761            194
 1               4           1761            225
