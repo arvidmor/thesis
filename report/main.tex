@@ -7,9 +7,12 @@
 \usepackage{fancyhdr}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage[font=small,labelfont=bf]{caption}
 \usepackage[textsize=tiny]{todonotes}
 \usepackage[style=ieee, backend=biber]{biblatex}
 \usepackage{hyperref}
+
 
 \setlength {\marginparwidth }{2cm}
 
@@ -67,24 +70,23 @@
 \section*{Abstract}
 \input{sections/abstract.tex}
 
-\section{Introduction}
+\newpage\section{Introduction}
 \input{sections/introduction.tex}
 
 
-\section{Related Work}
+\newpage\section{Related Work}
 \input{sections/rel_work.tex}
 
-\section{Background}
+\newpage\section{Background}
 \input{sections/background.tex}
 
-\section{Method}
+\newpage\section{Method}
 \input{sections/method.tex}
 
-\section{Results}
+\newpage\section{Results}
 \input{sections/experiments.tex}
 
-\section{Conclusion}
-\section{Future Work}
+\newpage\section{Future Work}\label{sec:future_work}
 
 \printbibliography
 
