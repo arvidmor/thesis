@@ -41,6 +41,17 @@
     showtabs=false,
     tabsize=2
 }
+\lstdefinestyle{pseudocode}{ 
+    mathescape=true,
+    frame=tblr,
+    numbers=left, 
+    numberstyle=\tiny,
+    basicstyle=\scriptsize, 
+    keywordstyle=\color{black}\bfseries\em,
+    keywords={,input, output, return, datatype, function, in, if, else, foreach, while, begin, end, } %add the keywords you want, or load a language as Rubens explains in his comment above.
+    numbers=left,
+    % xleftmargin=.04\textwidth
+}
 \lstset{style=mystyle}
 
 
@@ -74,19 +85,20 @@
 \input{sections/introduction.tex}
 
 
-\newpage\section{Related Work}
+\newpage\section{Related Work}\label{sec:rel_work}
 \input{sections/rel_work.tex}
 
-\newpage\section{Background}
-\input{sections/background.tex}
+\newpage\section{Introduction to FRAM}\label{sec:fram}
+\input{sections/fram.tex}
 
-\newpage\section{Method}
+\newpage\section{Implementing DSU}
 \input{sections/method.tex}
 
-\newpage\section{Results}
+\newpage\section{Results and discussion}
 \input{sections/experiments.tex}
 
 \newpage\section{Future Work}\label{sec:future_work}
+\input{sections/future_work.tex}
 
 \printbibliography
 
