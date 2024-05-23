@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt]{article}
+\documentclass[a4paper, 11pt]{report}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -11,11 +11,13 @@
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage[textsize=tiny]{todonotes}
 \usepackage[style=ieee, backend=biber]{biblatex}
+\usepackage{times}
+\usepackage{framed}
 \usepackage{hyperref}
 
 
 \setlength {\marginparwidth }{2cm}
-
+\definecolor{shadecolor}{rgb}{0.95, 0.95, 0.95}
 % Code listing style
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -67,7 +69,13 @@
 \renewcommand{\footrulewidth}{0.5pt}
 \setlength{\headheight}{15pt}
 
+\newlength{\figurewidth}
+\setlength{\figurewidth}{0.7\textwidth}
+
+\newcommand{\codesize}{\scriptsize}
+
 \begin{document}
+
 
 \input{sections/titlepage}
 
@@ -78,26 +86,34 @@
 % Todo-list
 \listoftodos
 % Start of the report
-\section*{Abstract}
+\begin{abstract}
+% Summarize introduction, method, results, and conclusion
 \input{sections/abstract.tex}
+\end{abstract}
 
-\newpage\section{Introduction}
+\chapter{Introduction}
 \input{sections/introduction.tex}
 
 
-\newpage\section{Related Work}\label{sec:rel_work}
+\chapter{Background}
+
+\section{FRAM}\label{sec:fram}
+\input{sections/fram.tex}
+\section{Related work}\label{sec:rel_work}
 \input{sections/rel_work.tex}
 
-\newpage\section{Introduction to FRAM}\label{sec:fram}
-\input{sections/fram.tex}
 
-\newpage\section{Implementing DSU}
+\chapter{Implementing DSU}
 \input{sections/method.tex}
 
-\newpage\section{Results and discussion}
+\chapter{Results and discussion}
 \input{sections/experiments.tex}
 
-\newpage\section{Future Work}\label{sec:future_work}
+\chapter{Conclusions and Future Work}
+\section{Conclusions}\label{sec:conclusions}
+\input{sections/conclusions.tex}
+
+\section{Future Work}\label{sec:future_work}
 \input{sections/future_work.tex}
 
 \printbibliography

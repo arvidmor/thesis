@@ -1,0 +1,107 @@
+\documentclass[]{report}
+\usepackage[latin1]{inputenc}
+\usepackage{times}
+\usepackage{graphicx}
+\begin{document}
+
+ \newlength{\figurewidth}
+\setlength{\figurewidth}{0.7\textwidth}
+
+\newcommand{\codesize}{\scriptsize}
+
+\title{Title}
+
+\author{Author}
+
+% check if front page needs something special lite stating
+% what kind of thesis this is etc.
+
+\maketitle
+\tableofcontents
+\listoffigures
+
+% Make first version of abstract consist of four sentences. Fill in
+% more later, if needed. 
+
+\begin{abstract}
+% First sentence: state the problem.
+
+% Second sentence: describe why this is a problem.
+
+% Third sentence: state your solution.
+
+% Fourth sentence: sketch the consequences of your solution
+
+\end{abstract}
+
+% Make first version of the introduction section consist of four
+% paragraphs. Add paragraphs later if needed.
+
+\chapter{Introduction}
+% usually 2-4 pages, you can use ``I'' or "We'' when you
+% describe what you have done
+
+
+% 1. Introduction to the problem and problem statement:
+% why is the work needed/done, how will ``the world'' benefit from it.
+% everybody with some education should be able to read this part
+% and understand that the thesis is useful
+% you can use sections for these parts\section{Motivation and Problem Statement}
+
+% 2. how do you attack the problem including the method (analysis, 
+% experimentation etc)
+
+% 3. other possible approaches or solutions
+
+% 4. describe your solution and the summarize the main results,
+%    if possible the research contributions
+
+
+% 5: Thesis structure: outline of rest of thesis
+
+
+\chapter{Background}
+
+% material necessary to understand the rest of the thesis
+
+% last section in this chapter is sometimes related work
+
+% note: none of your own work here. It must be very easy for the reader to
+% understand what is your (new) work and what was there before.
+% Note that readers who know the area, may skip this part
+
+~\cite{dunkels04contiki}
+
+\chapter{Design}
+\label{sect:design}
+
+\chapter{Implementation}
+\label{sect:implementation}
+
+% can be merged with Design
+
+\chapter{Evaluation}
+\label{sect:evaluation}
+
+% often starts with the goal of the evaluation and the setup
+
+% make sure that all graphs have units on the axes
+
+% for each experiment:
+% 1. Motivation (why should the reader care about this experiment)
+% 2. setup (if different from the main setup)
+% optional: expected result: "We expect that with a higher load the response
+% time increases"
+% 3. result: the graph shows that ....
+% 4. anlysis: explain why the graph "shows what it shows". Explain non-obvious
+% behaviours in the results (sometimes you need to make more/other measurements to
+% support your analysis
+
+\chapter{Conclusions and Future work}
+\label{sect:conclusions}
+
+
+\bibliography{ref}
+\bibliographystyle{plain}
+
+\end{document}
