@@ -1,11 +1,10 @@
 This section presents the results of the experiments conducted in this project. The experiments were designed to evaluate the performance of the DSU process in the context of embedded systems, and to investigate the impact of using FRAM as the storage medium for the update process. The main focus of the experiments was to measure the time it takes to perform the update process, and evaluate if the procedure is feasible in a real-time system.
 
-All of the below experiments were conducted on the Texas Instruments MSP430FR5994 microcontroller, running at various clock frequencies. The data was gathered using the built-in debugging tools of the Code Composer Studio IDE. The time estimates were not measured directly but instead calculated based on the number of clock cycles spent in each part of the update process. 
+All of the below experiments were conducted on the MSP430FR5994 microcontroller, running at both 8MHz and 16MHz. The data was gathered using the built-in debugging tools of the Code Composer Studio IDE. The time estimates were not measured directly but instead calculated based on the number of clock cycles spent in each part of the update process, along with the clock frequency. 
 
 \section{Simulated Updates}
 As an in depth performance evaluation of the DSU process, a series of simulated updates were conducted. The simulated updates were designed to test the performance of the DSU process under various conditions, such as different update sizes, and using different clock frequencies. The simulated updates were conducted by manually creating \textit{diff} files and applying them to a preallocated array in the upper FRAM of the device. The simulated updates uses only one operation type each, to measure the impact of each operation. In the first series of experiments, the focus is to determine the bottlenecks of the process, as well as how to structure the \textit{diff} files to optimise performance. The second series of experiments focus on the clock frequency of the device, an important factor in deciding the usefulness of FRAM as the storage medium for the device.
 \subsection{Decode and apply performance}
-\todo{Emphasize apply phase}
 \subsubsection*{\textbf{\textit{Decode phase}}}
 Figure \ref{fig:wDecode8} shows the processor cycles required to decode \textbf{Write} operations at different update sizes running at 8MHz. The cycles required to decode the operation is linear with the size of the update, and grows at an increasingly higher rate the more operations are used, as shown by the "1 op / Word" data points. This 'context switching' overhead is sizeable, adding triple the amount of cycles compared to extending a single operation with another word of data. This underlines the importance of minimizing the number of operations in an update.
 \begin{figure}[!ht]
@@ -55,7 +54,7 @@ The \textbf{Shift} operation behaves identically when it comes to the apply phas
 Additional tests were made to verify that the \textit{offset} of the \textbf{Shift} operation does not impact the performance, and the results showed that this is indeed the case. 
 
 \subsection{Clock frequency impact}
-As previously mentioned, the MSP430FR5994 is limited to 8MHz when accessing FRAM. This means running the device at 16MHz will require wait states for every access to FRAM. Although this introduces some overhead in the form of additional cycles required for each access, the overall real-time performance of the update process is should still be improved owing to the faster processing of data.  
+As previously mentioned, the MSP430FR5994 is limited to 8MHz when accessing FRAM. This means running the device at 16MHz will require wait states for every access to FRAM. Although this introduces some overhead in the form of additional cycles required for each access, the overall real-time performance of the update process should still be improved owing to the faster processing of data.  
 In Figure \ref{fig:w8vs16}, the difference in required cycles can be seen when running the same update at different clock frequencies. Even with the added overhead of wait state cycles, the update process is faster at 16MHz than at 8MHz, running at twice the speed but with, on average, $22.9\%$ more cycles required. 
 \begin{figure}[!ht]
     \begin{shaded}
@@ -66,10 +65,9 @@ In Figure \ref{fig:w8vs16}, the difference in required cycles can be seen when r
     \end{shaded}
 \end{figure}
 
-In previous works related to this, various real-time deadlines have been targeted, such as Wahler et al. with 5ms \cite{dynUpdateFramework}, and Yaacoub et al. who measured an idle time of 3ms. Thus, these numbers ase used as target deadlines for the following discussion. Note that these deadlines may differ dramatically depending on the application and target system. 
+In previous works related to this research, various real-time deadlines have been targeted, such as Wahler et al. with 5ms \cite{dynUpdateFramework}, and Yaacoub et al. who measured an idle time of 3ms. Thus, these numbers ase used as target deadlines for the following discussion. Note that these deadlines may differ dramatically depending on the application and target system. 
 
 The results of the simulated updates show that the DSU process benefits greatly from a higher clock frequency. 
-\todo{Stack decode + apply on top of eachother}
 \begin{figure}[!ht]
     \begin{shaded}
         \centering
@@ -81,11 +79,8 @@ The results of the simulated updates show that the DSU process benefits greatly 
 
 In figure \ref{fig:s8vs16}, the real-time performance of the update process is shown. The real-time performance is calculated by multiplying the number of cycles required to perform the update with the clock cycle time. As can be seen, the real-time performance of the update process is significantly improved when running at 16MHz, with the update process being on average $38.6\%$ faster. This is a significant improvement, and shows that the DSU process is feasible in a real-time system, even with the added overhead of wait states. Furthermore, using a linear regression, an estimated maximum size of a write operation was calculated to 124 words at 16MHz while still meeting the 3ms deadline. At 8MHz, this number is instead 75 words. This includes the decode phase, which the majority of time is spent in. Thus, if future work improves upon the decode phase, perhaps with more sophisticated encoding, it would certainly be possible to increase this limit.
 
-\todo{shift operation}
 \section{Proof of Concept Updates}
-Firstly, to demonstrate the feasibility of the DSU process, a simple update was constructed which changes a single word in the binary image and makes the LED of the launchpad blink at a different frequency. 
-\todo{data}
-As expected from such a small update, the time it takes to perform the update is very short, with the majority of time spent in the decoding phase. 
+Firstly, to demonstrate the feasibility of the DSU process, a simple update was constructed which changes a single word in the binary image and makes the LED of the launchpad blink at a different frequency. As expected from such a small update, the time it takes to perform the update is very short. The majority of time spent in the decoding phase, taking 1859 cycles, whereas the Apply phase only took 260. 
 
 As a more interesting proof-of-concept, a larger update was constructed which changes the behaviour of the LED blinking and introduces new functionality to the application. The application pre-update simply blinks both LEDs on the launchpad at a fixed, synchronized frequency. The post-update application adds functionality to a button on the microcontroller. When pressed, the button changes the blinking frequency of one of the LEDs and makes them unsynchronized, thus providing a more complex update scenario which also has the benefit of being visibly verifiable. 
 \begin{framed}
@@ -121,4 +116,4 @@ P5IFG &= 0; // Clear interrupt flags
 \end{minipage}
 \end{framed}\hfill
 
-The update took a total of 6151 cycles to complete at 8MHz, with the majority of the time spent in the decode phase. The update process was completed in 0.76ms, which is well within the 3ms deadline. While this proof-of-concept is still relatively simple, requiring only a single \textbf{Shift}- and \textbf{Write} operation each, it demonstrates the potential of the DSU process. 
+The update took a total of 6151 cycles to complete at 8MHz, with the majority of the time spent in the decode phase. The update process was completed in 0.77ms, which is well within the 3ms deadline. This real-time performance is also expected to improve further when running at 16MHz, as previously discussed While this proof-of-concept is still relatively simple, requiring only a single \textbf{Shift}- and \textbf{Write} operation each, it demonstrates the potential of the DSU process. 

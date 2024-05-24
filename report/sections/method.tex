@@ -32,14 +32,13 @@ func1(var1)
 \end{framed}\hfill
 
 In such a scenario, the space for the error handling code has to be created by shifting the function call, and all subsequent instructions. The \textbf{Shift} operation handles this by stating the start and end addresses of the block to be shifted, and the offset to shift by, visualised in Figure \ref{fig:shift_example}. 
-\todo{extend with post-op figure}
 \begin{figure}[!ht]
     \begin{shaded}
         \centering
         {
             \setlength{\fboxsep}{0pt}%
             \setlength{\fboxrule}{0.5pt}%
-            \fbox{\includegraphics[width=0.8\textwidth]{img/shift_example.png}}
+            \fbox{\includegraphics[width=\figurewidth]{img/shift_example.png}}
         }
         \caption{Visualisation of the shift operation.}
         \label{fig:shift_example}
@@ -48,7 +47,6 @@ In such a scenario, the space for the error handling code has to be created by s
 After the \textbf{Shift} operation, additional instructions can safely be added to the newly made space with the \textbf{Write} operation. As the program counter increments and hits the updated region, the newly added and shifted instructions will be executed as intended. This is a more efficient way of describing the update as opposed to individual word-level changes, as there is no need to state already existing data. As one might expect, shifting a large portion of the binary image can be costly in terms of time, and the more code that is located posterior to the shifted region, the more costly the operation becomes. Methods to mitigate this cost are discussed in section \ref{sec:memory_layout}.
 
 \textbf{\textit{Format.}} 
-\todo{Diagram}
 The \textit{diff} file is a text file that describes the changes to be made to the binary image. In this research, two main types of operations are considered: \textbf{Write} and \textbf{Shift}. The \textbf{Write} operation describes a change to a specific address, or range of addresses in the binary image, while the \textbf{Shift} operation describes a change that causes a portion of the binary image to be shifted. The format of the \textit{diff} file differs between operations, and below are some examples of the format.
 
 \textbf{\textit{Write}:}
@@ -78,18 +76,20 @@ With the main requirements of the implementation defined, the next step is to de
 
 \textbf{Decode.}
 The Decode phase is responsible for reading the patch file and translating it into a format that can be used to apply the update. The patch file is read in one pass from the FRAM and decoded into a data structure that represents the changes to be made, which can be seen in listing \ref{lst:diff_struct}. 
-\begin{lstlisting}[
-    caption={The data structure used to represent the changes in the patch file.},
-    label={lst:diff_struct}
-]
-typedef struct  
-{
-    char      opcode;
-    uint16_t  no_words;
-    uint16_t* addr1;
-    uint16_t* addr2;
-} diff_entry_t;
-\end{lstlisting}
+\begin{framed}
+    \begin{lstlisting}[
+        caption={The data structure used to represent the changes in the patch file.},
+        label={lst:diff_struct}
+        ]
+        typedef struct  
+        {
+            char      opcode;
+            uint16_t  no_words;
+            uint16_t* addr1;
+            uint16_t* addr2;
+            } diff_entry_t;
+    \end{lstlisting}
+\end{framed}
 This data structure is then used in the Apply phase to apply the changes. The Decode phase is also responsible for verifying the integrity of the patch file, which in this research is of limited functionality, simply verifying that the patch file is in the correct format. To keep the implementation predictable in terms of memory usage, memory for the patch file, decoded patch instructions, and data is allocated at compile time in the FRAM of the device.
 
 \textbf{Apply.}
@@ -98,33 +98,18 @@ The Apply phase is responsible for applying the changes to the binary image. The
 The Apply phase is a simple loop that iterates over the changes in the patch file and applies them to the specified addresses. An issue with the implementation is the lack of atomicity in the apply phase. If the update is interrupted, or fails for any reason, the system will be left in an inconsistent state. To counteract this, a rollback mechanism could be implemented using the same \textit{diff} file, but this is left to future work.
 
 \section{Memory layout}\label{sec:memory_layout}
-The MSP430FR5994 uses a unified memory model where FRAM, SRAM and registers can be accessed in the same memory space. The memory layout of the MSP430FR5994 can be seen in table \ref{tab:memory_layout}.
-\begin{table}[!ht]
-\centering
-\begin{tabular}{|p{0.55\linewidth}|c|c|}
-    \hline
-    \textbf{Memory} & \textbf{Address range} & \textbf{Size} \\
-    \hline
-    Reserved, Tiny RAM, Peripherals & 0x0000-0x0FFF & 4KB \\
-    \hline
-    Bootloader memory (ROM) & 0x1000-0x17FF & 2KB \\
-    \hline
-    Information memory, Device Descriptor (FRAM) & 0x1800-0x1AFF & 768B \\
-    \hline
-    VACANT & 0x1B00-0x1BFF & 256B \\
-    \hline
-    \textbf{RAM} & \textbf{0x1C00-0x3BFF} & \textbf{8KB} \\
-    \hline
-    \textbf{Code and Data memory, Interrupt vectors (FRAM)} & \textbf{0x4000-0x43FFF} & \textbf{256KB} \\
-    \hline
-\end{tabular}
-\caption{Memory layout of the MSP430FR5994 microcontroller \cite{fr5994DataSheet}.}
-\label{tab:memory_layout}
-\end{table}
-\todo{simpler figure}
+The MSP430FR5994 uses a unified memory model where FRAM, SRAM and registers can be accessed in the same memory space. The memory layout of the MSP430FR5994 can be seen in figure \ref{fig:memory_layout}.
+\begin{figure}[!ht]
+    \begin{shaded}
+    \centering
+    \includegraphics[width=\figurewidth]{img/mem_layout.png}
+    \caption{Memory layout of the MSP430FR5994 microcontroller \cite{fr5994DataSheet}.}
+    \label{fig:memory_layout}
+\end{shaded}
+\end{figure}
 
-The table has been simplified to highlight the important parts of discussion for this research. Essentially, the final section of the memory space is the main memory used in any application running on the device. This is where the binary image of the program is stored, and where the update process will take place. The memory space is automatically divided into two sections by the compiler and linker, FRAM (0x4000-0xFFFF) and HIFRAM (0x10000 - 0x43FFF). This is due to the fact that the 16-bit architecture of the microprocessor doesn't allow addressing beyond 16-bit memory addresses. Accessing the HIFRAM section is only possible with an extension of the instruction set, using less efficient, emulated instructions. How these sections are used is up to the developer and can be configured in the linker script. 
+The figure has been simplified to highlight the important parts of discussion for this research. Essentially, the final section of the memory space is the main memory used in any application running on the device. This is where the binary image of the program is stored, and where the update process will take place. The memory space is automatically divided into two sections by the compiler and linker, FRAM (0x4000-0xFFFF) and HIFRAM (0x10000 - 0x43FFF). This is due to the fact that the 16-bit architecture of the microprocessor doesn't allow addressing beyond 16-bit memory addresses. Accessing the HIFRAM section is only possible with an extension of the instruction set, using less efficient, emulated instructions. How these sections are used is up to the developer and can be configured in the linker script. 
 
-To facilitate an efficient update process, the program should be structured in such a way that the added or removed code affects the rest of the program as little as possible. For example, moving a function in memory requires that all calls to said function are updated, which can be a time-consuming process. Thus, in this research, the memory layout opted for is to have the DSU functionality in the FRAM section, with all other application code in the HIFRAM section. This way, the DSU code is never affected by the update process, which would be the case if it was stored in the same section as the application code. 
+To facilitate an efficient update process, the program should be structured in such a way that the added or removed code affects the rest of the program as little as possible. For example, moving a function in memory requires that all calls to said function are updated, which can be a time-consuming process. Additionally, adding new code within existing functions requires shifting everything directly below it, i.e. at higher addresses. Fortunately, the 2-section structure allows code within the FRAM section to be shifted without affecting the HIFRAM section, as there likely will be unused space between the two sections. However, in this research, the memory layout opted for is to have the DSU functionality in the FRAM section, with all other application code in the HIFRAM section. This way, the DSU code itself is never affected by the update process, which would almost certainly cause the update to fail. 
 
 The drawback of this approach is that the program code is not as fast to access as it would be if it was stored in the FRAM section. This is a trade-off that was deemed necessary due to the decrease in complexity of any update performed.  
