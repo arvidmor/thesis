@@ -15,12 +15,13 @@
   month = {11},
   articleno = {99},
   numpages = {27},
+  pages = {1--27},
   keywords = {Dynamic software updates, mobile robotics, safety-critical systems, aerial drones}
 }
 
 @manual{fr5994DataSheet,
   organization  = {Texas Instruments},
-  date          = {Revised January 2021},
+  note          = {Revised January 2021},
   title         = {MSP430FR599x, MSP430FR596x Mixed-Signal Microcontrollers},
   type          = {Datasheet},
   year          = {2016},
@@ -37,7 +38,7 @@
   year        = {2012}
 }
 
-@inproceedings{dynUpdateFramework,
+@InProceedings{dynUpdateFramework,
   author = {Wahler, Michael and Richter, Stefan and Oriol, Manuel},
   title = {Dynamic software updates for real-time systems},
   year = {2009},
@@ -50,6 +51,7 @@
   booktitle = {Proceedings of the 2nd International Workshop on Hot Topics in Software Upgrades},
   articleno = {2},
   numpages = {6},
+  pages    = {1--6},
   keywords = {real-time, embedded, dynamic software update},
   location = {Orlando, Florida},
   series = {HotSWUp '09}
@@ -66,6 +68,7 @@ and D{\"o}mer, Rainer
 and Gerstlauer, Andreas
 and Rammig, Franz J.",
 title="Dynamic Software Update of Resource-Constrained Distributed Embedded Systems",
+doi = {10.1007/978-0-387-72258-0_33},
 booktitle="Embedded System Design: Topics, Techniques and Trends",
 year="2007",
 publisher="Springer US",
@@ -89,7 +92,8 @@ publisher="Springer Berlin Heidelberg",
 address="Berlin, Heidelberg",
 pages="195--201",
 abstract="Dynamic Software Update (DSU) is an advanced software practice to change a running program with imposing negligible service interruption while updating. In this paper, we present DSUEnhancer, a DSU implementation for resource-constrained C programs like embedded software. DSUEnhancer generates a patch file off-line and loads it into the dynamic memory of an updated program on-line. In particular, DSUEnhancer is relatively lightweight in terms of memory and CPU usage and runs on the ARM architecture with the gcc cross compiler.",
-isbn="978-3-642-26010-0"
+isbn="978-3-642-26010-0",
+doi = {https://doi.org/10.1007/978-3-642-26010-0_24}
 }
 
 
@@ -131,7 +135,7 @@ isbn="978-3-642-26010-0"
 
 @manual{msp430Flash,
   organization  = {Texas Instruments},
-  date          = {Revised August 2012},
+  note          = {Revised August 2012},
   title         = {MSP430F22x2 MSP430F22x4 Mixed-Signal Microcontrollers},
   type          = {Datasheet},
   year          = {2006},
@@ -142,8 +146,16 @@ isbn="978-3-642-26010-0"
 @report{framSpeed,
   author      = {Thanigai, Priya and Goh, William},
   date        = {June 2011},
-  institution = {Texas Instruments},
+  organization = {Texas Instruments},
   title       = {Maximizing Write Speed on the MSP430™ FRAM},
   type        = {Application Report},
   year        = {2011}
+}
+
+@report{framOverview,
+  organization      = {Fujitsu Semiconductor Memory Solution Ltd.},
+  date              = {February 2021},
+  title             = {FRAM Overview and Usage (WhitePaper)},
+  type              = {WhitePaper},
+  year              = {2021}
 }
